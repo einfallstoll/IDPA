@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<title></title>
+
+<script src="backend.js"></script>
+
+<script>
+    "use strict";
+
+    var result = analyze({
+        requestID: "0",
+        terrain: {
+            angle: 15,
+            gravitation: 9.81,
+            length: 10,
+        },
+        subject: {
+            weight: 50,
+            area: 1,
+            cw: 0.78,
+            init_velo: 0,
+            force: 0,
+        },
+        resistance: {
+            stationary: 0.027,
+            underway: 0.014,
+        },
+        fluid: {
+            density: 1.2041,
+        },
+        points: {
+            max: 100,
+            steps: 1,
+        },
+    });
+
+    if (result == 5) {
+        alert("success");
+    } else {
+        alert("failure")
+    };
+</script>
