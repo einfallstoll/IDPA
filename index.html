@@ -8,7 +8,30 @@
 <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="lib/snap.svg/dist/snap.svg-min.js"></script>
 
-<title>IDPA 2014</title>
+<style>
+.no-margin {
+    margin: 0;
+}
+</style>
+
+<script>
+$(function() {
+    $('.pre-defined').change(function() {
+        $(this).closest('.form-group').find('input').val($(this).val());
+    });
+    
+    $('.form-group input').keyup(function() {
+        var preDefined = $(this).closest('.form-group').find('.pre-defined');
+        if (preDefined.find('[value="' + $(this).val() + '"]').length > 0) {
+            preDefined.val($(this).val());
+        } else {
+            preDefined.val('');
+        }
+    });
+});
+</script>
+
+<title>AirRes-Visualizer</title>
 
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">
@@ -19,7 +42,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">IDPA 2014</a>
+                <a class="navbar-brand" href="#">AirRes-Visualizer</a>
             </div>
 
             <div class="collapse navbar-collapse" id="main-navigation">
@@ -43,3 +66,58 @@
         </div>
     </div>
 </nav>
+
+<!--
+
+terrain: angle (float), gravitation (float), length (float)
+subject: weight (float), area (float), cw (float), init_velo (float), force (float)
+
+
+-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <form class="form form-horizontal">
+                <h3 class="no-margin">Untergrund</h3>
+                <hr>
+                <div class="form-group">
+                    <label class="col-sm-5 control-label">Steigung (°)</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" min="0" max="45" step="0.1">
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control pre-defined">
+                            <option value="">Vordefinierte Werte...</option>
+                            <option value="0">Kein Gefälle</option>
+                            <option value="10">Leichtes Gefälle</option>
+                            <option value="20">Starkes Gefälle</option>
+                            <option value="35">Steilste Strasse der Welt</option>
+                            <option value="45">Maximal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-5 control-label">Gravitationsbeschleunigung (m/s²)</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" min="0" step="0.01">
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control pre-defined">
+                            <option value="">Vordefinierte Werte...</option>
+                            <option value="3.7">Merkur</option>
+                            <option value="8.87">Venus</option>
+                            <option value="9.798">Erde</option>
+                            <option value="1.62">Mond</option>
+                            <option value="3.71">Mars</option>
+                            <option value="24.79">Jupiter</option>
+                            <option value="10.44">Saturn</option>
+                            <option value="8.87">Uranus</option>
+                            <option value="11.15">Neptun</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
