@@ -32,7 +32,7 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     
     for (var i = 0; i <= vSegments; i++) {
         
-        // Calculate the points for horizontal grid
+        // Calculate the points for vertical grid
         var x1 = this.config.grid.margin - this.config.grid.strokeWidth / 2,
             y1 = this.config.grid.margin + i * gridHeight,
             x2 = this.config.grid.margin + width + this.config.grid.strokeWidth / 2,
