@@ -18,12 +18,6 @@ function AirResContext(canvas, dom) {
     return this;
 }
 
-AirResContext.prototype.getCanvas = function () {
-    'use strict';
-    
-    return this.context;
-};
-
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     'use strict';
     
