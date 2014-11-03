@@ -24,6 +24,10 @@ function AirResContext(canvas, dom) {
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     'use strict';
     
+    if (!hSegments || !vSegments) {
+        throw new Error('The amount of segments cannot be 0');
+    }
+    
     // Save the amount of segments
     this.horizontalSegments = hSegments;
     this.verticalSegments = vSegments;
