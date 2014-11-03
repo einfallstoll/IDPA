@@ -15,11 +15,18 @@ function AirResContext(canvas, dom) {
         }
     };
     
+    this.horizontalSegments = 0;
+    this.verticalSegments = 0;
+    
     return this;
 }
 
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     'use strict';
+    
+    // Save the amount of segments
+    this.horizontalSegments = hSegments;
+    this.verticalSegments = vSegments;
     
     // Create new group for the grid
     this.grid = this.context.g();
