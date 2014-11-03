@@ -2,6 +2,7 @@
 
 <title></title>
 
+<script src="lib.js"></script>
 <script src="backend.js"></script>
 
 <script>
@@ -12,12 +13,12 @@
         terrain: {
             angle: 15,
             gravitation: 9.81,
-            length: 10,
+            length: 1000,
         },
         subject: {
             weight: 50,
             area: 1,
-            cw: 0.78,
+            cw: 2,
             init_velo: 0,
             force: 0,
         },
@@ -30,13 +31,9 @@
         },
         points: {
             max: 100,
-            steps: 1,
+            steps: 0.1,
         },
     });
 
-    if (result == 5) {
-        alert("success");
-    } else {
-        alert("failure")
-    };
+    console.log(result);
 </script>
