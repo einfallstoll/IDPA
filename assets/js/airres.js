@@ -10,7 +10,11 @@ function AirResContext(canvas, dom) {
     this.config = {
         grid: {
             margin: 30,
-            stroke: Snap.rgb('#444'),
+            stroke: '#EEE',
+            strokeWidth: 2
+        },
+        path: {
+            stroke: '#444',
             strokeWidth: 2
         }
     };
@@ -18,8 +22,34 @@ function AirResContext(canvas, dom) {
     this.horizontalSegments = 0;
     this.verticalSegments = 0;
     
+    this.boundings = {
+        x: {
+            min: 0,
+            max: 1
+        },
+        y: {
+            min: 0,
+            max: 1
+        }
+    }
+    
     return this;
 }
+
+AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
+    this.boundings = {
+        x: {
+            min: xMin,
+            max: xMax
+        },
+        y: {
+            min: yMin,
+            max: yMax
+        }
+    }
+    
+    console.log(this.boundings);
+};
 
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     'use strict';
@@ -72,6 +102,51 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
         stroke: this.config.grid.stroke,
         strokeWidth: this.config.grid.strokeWidth
     });
+    
+    return this.grid;
+};
+
+AirResContext.prototype.drawData = function (xData, yData) {
+    if (xData.length != yData.length) {
+        throw new Error('Amount of datapoints for x- and y-axis must match');
+    }
+    
+    var height = this.domContext.height() - 2 * this.config.grid.margin,
+        width = this.domContext.width() - 2 * this.config.grid.margin;
+    
+    var path = '';
+    
+    for (var i = 0; i < xData.length; i++) {
+        
+        var xCoordinate = ((xData[i] - this.boundings.x.min) / (this.boundings.x.max - this.boundings.x.min)) * width + this.config.grid.margin,
+            yCoordinate = height - ((yData[i] - this.boundings.y.min) / (this.boundings.y.max - this.boundings.y.min)) * height + this.config.grid.margin;
+        
+        if (i === 0) {
+            path += 'M';
+        } else {
+            path += 'L';
+        }
+        
+        path += xCoordinate + ',' + yCoordinate
+        
+        /*var circ = this.context.circle(xCoordinate, yCoordinate, 2);
+        circ.attr({
+            stroke: this.config.grid.stroke,
+            strokeWidth: this.config.grid.strokeWidth
+        });*/
+        
+        console.log(xData[i], '=>', xCoordinate, ' / ', yData[i], '=>', yCoordinate);
+        
+    }
+    
+    var graph = this.context.path(path);
+    graph.attr({
+        stroke: this.config.path.stroke,
+        strokeWidth: this.config.path.strokeWidth,
+        'fill-opacity': 0
+    });
+    
+    return graph;
 };
 
 $(function () {
@@ -85,19 +160,90 @@ $(function () {
     domContext.attr('height', totalHeight);
     
     var sCanvas = new Snap('#diagram'),
-        xData = [
-            1.5,
-            7.8
-        ],
-        yData = [
-            3.7,
-            9.4
-        ],
-        xMin = 0,
-        xMax = Math.max.apply(null, xData),
-        yMin = 0,
-        yMax = Math.min.apply(null, yData),
         context = new AirResContext(sCanvas, domContext);
     
     context.drawGrid(15, 10);
+    
+    var paths = [];
+    
+    var redraw = function() {
+        
+        paths.forEach(function(path) {
+            path.remove();
+        });
+        
+        var result = analyze({
+            requestID: Math.random(),
+            terrain: {
+                angle: 15,
+                gravitation: 9.81,
+                length: 1000,
+            },
+            subject: {
+                weight: 50,
+                area: 1,
+                cw: 2,
+                init_velo: 0,
+                force: 0,
+            },
+            resistance: {
+                stationary: 0.027,
+                underway: 0.014,
+            },
+            fluid: {
+                density: 1.2041,
+            },
+            points: {
+                max: 100,
+                steps: 0.1,
+            }
+        });
+
+        console.log(result);
+        
+        var properties = $('input[name=diagram]:checked').val().split('|'),
+            xProperty = properties[1],
+            yProperty = properties[0];
+        
+        var xMin = 0,
+            xMax = 0,
+            yMin = 0,
+            yMax = 0;
+
+        $('input[name=graphs]').each(function() {
+            var xData = result[$(this).val()].map(function(obj) {
+                return obj[xProperty];
+            });
+
+            var yData = result[$(this).val()].map(function(obj) {
+                return obj[yProperty];
+            });
+            
+            var xTempMax = Math.max.apply(null, xData),
+                yTempMax = Math.max.apply(null, yData);
+            
+            if (xTempMax > xMax) xMax = xTempMax;
+            if (yTempMax > yMax) yMax = yTempMax;
+        });
+        
+        context.setBoundings(xMin, xMax, yMin, yMax);
+        
+        $('input[name=graphs]:checked').each(function() {
+            var graphType = $(this).val();
+            
+            var xData = result[graphType].map(function(obj) {
+                return obj[xProperty];
+            });
+
+            var yData = result[graphType].map(function(obj) {
+                return obj[yProperty];
+            });
+
+            paths.push(context.drawData(xData, yData));
+        });
+        
+    };
+    
+    $('input[name=graphs]').change(redraw);
+    $('input[name=diagram]').change(redraw);
 });
