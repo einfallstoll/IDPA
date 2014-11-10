@@ -211,11 +211,11 @@ $(function () {
             yMax = 0;
 
         $('input[name=graphs]').each(function() {
-            var xData = result[$(this).val()].map(function(obj) {
+            var xData = (result[$(this).val()] || []).map(function(obj) {
                 return obj[xProperty];
             });
 
-            var yData = result[$(this).val()].map(function(obj) {
+            var yData = (result[$(this).val()] || []).map(function(obj) {
                 return obj[yProperty];
             });
             
@@ -228,19 +228,21 @@ $(function () {
         
         context.setBoundings(xMin, xMax, yMin, yMax);
         
-        $('input[name=graphs]:checked').each(function() {
-            var graphType = $(this).val();
-            
-            var xData = result[graphType].map(function(obj) {
-                return obj[xProperty];
-            });
+        if (xMin != xMax && yMin != yMax) {
+            $('input[name=graphs]:checked').each(function() {
+                var graphType = $(this).val();
 
-            var yData = result[graphType].map(function(obj) {
-                return obj[yProperty];
-            });
+                var xData = (result[graphType] || []).map(function(obj) {
+                    return obj[xProperty];
+                });
 
-            paths.push(context.drawData(xData, yData));
-        });
+                var yData = (result[graphType] || []).map(function(obj) {
+                    return obj[yProperty];
+                });
+
+                paths.push(context.drawData(xData, yData));
+            });
+        }
         
     };
     
