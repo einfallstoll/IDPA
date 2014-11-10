@@ -31,12 +31,14 @@ function AirResContext(canvas, dom) {
             min: 0,
             max: 1
         }
-    }
+    };
     
     return this;
 }
 
 AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
+    'use strict';
+    
     this.boundings = {
         x: {
             min: xMin,
@@ -46,9 +48,7 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
             min: yMin,
             max: yMax
         }
-    }
-    
-    console.log(this.boundings);
+    };
 };
 
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
@@ -127,15 +127,7 @@ AirResContext.prototype.drawData = function (xData, yData) {
             path += 'L';
         }
         
-        path += xCoordinate + ',' + yCoordinate
-        
-        /*var circ = this.context.circle(xCoordinate, yCoordinate, 2);
-        circ.attr({
-            stroke: this.config.grid.stroke,
-            strokeWidth: this.config.grid.strokeWidth
-        });*/
-        
-        console.log(xData[i], '=>', xCoordinate, ' / ', yData[i], '=>', yCoordinate);
+        path += xCoordinate + ',' + yCoordinate;
         
     }
     
