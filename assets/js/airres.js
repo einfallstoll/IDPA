@@ -164,34 +164,33 @@ $(function () {
             path.remove();
         });
         
-        var result = analyze({
+        var input = {
             requestID: Math.random(),
             terrain: {
-                angle: 15,
-                gravitation: 9.81,
-                length: 1000,
+                angle: $('input[name=angle]').val(),
+                gravitation: $('input[name=gravitation]').val(),
+                length: $('input[name=length]').val(),
             },
             subject: {
-                weight: 50,
-                area: 1,
-                cw: 2,
-                init_velo: 0,
-                force: 0,
+                weight: $('input[name=weight]').val(),
+                area: $('input[name=area]').val(),
+                cw: $('input[name=cw]').val(),
+                init_velo: $('input[name=init_velo]').val(),
+                force: $('input[name=force]').val(),
             },
             resistance: {
-                stationary: 0.027,
-                underway: 0.014,
+                stationary: $('input[name=resistance]').val(),
+                underway: 0,
             },
             fluid: {
-                density: 1.2041,
+                density: $('input[name=density]').val(),
             },
             points: {
                 max: 100,
                 steps: 0.1,
             }
-        });
-
-        console.log(result);
+        },
+            result = analyze(input);
         
         var properties = $('input[name=diagram]:checked').val().split('|'),
             xProperty = properties[1],
