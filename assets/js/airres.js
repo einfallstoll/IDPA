@@ -167,23 +167,23 @@ $(function () {
         var input = {
             requestID: Math.random(),
             terrain: {
-                angle: $('input[name=angle]').val(),
-                gravitation: $('input[name=gravitation]').val(),
-                length: $('input[name=length]').val(),
+                angle: parseFloat($('input[name=angle]').val()),
+                gravitation: parseFloat($('input[name=gravitation]').val()),
+                length: parseFloat($('input[name=length]').val()),
             },
             subject: {
-                weight: $('input[name=weight]').val(),
-                area: $('input[name=area]').val(),
-                cw: $('input[name=cw]').val(),
-                init_velo: $('input[name=init_velo]').val(),
-                force: $('input[name=force]').val(),
+                weight: parseFloat($('input[name=weight]').val()),
+                area: parseFloat($('input[name=area]').val()),
+                cw: parseFloat($('input[name=cw]').val()),
+                init_velo: parseFloat($('input[name=init_velo]').val()),
+                force: parseFloat($('input[name=force]').val()),
             },
             resistance: {
-                stationary: $('input[name=resistance]').val(),
+                stationary: parseFloat($('input[name=resistance]').val()),
                 underway: 0,
             },
             fluid: {
-                density: $('input[name=density]').val(),
+                density: parseFloat($('input[name=density]').val()),
             },
             points: {
                 max: 100,
