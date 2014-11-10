@@ -56,7 +56,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Steigung (°)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" max="90" step="0.1">
+                        <input name="angle" class="form-control" type="number" min="0" max="90" step="0.1">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -73,7 +73,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Gravitationsbeschleunigung (m/s²)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="gravitation" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -93,7 +93,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Distanz (m)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="length" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -108,7 +108,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Reibungskoeffizient</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="resistance" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -136,7 +136,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Dichte des umgebenden Fluids (kg/m³)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="density" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -165,7 +165,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Gewicht (kg)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="1">
+                        <input name="weight" class="form-control" type="number" min="0" step="1">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -180,7 +180,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Maximale Querschnittsfläche (m²)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="area" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -195,7 +195,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Strömungswiderstandskoeffizient</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="cw" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -209,7 +209,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Startgeschwindigkeit (m/s)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="init_velo" class="form-control" type="number" min="0" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
@@ -227,7 +227,7 @@ $(function() {
                 <div class="form-group">
                     <label class="col-sm-5 control-label">Eigene Krafteinwirkung (N)</label>
                     <div class="col-sm-3">
-                        <input class="form-control" type="number" min="0" step="0.01">
+                        <input name="force" class="form-control" type="number" step="0.01">
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control pre-defined">
