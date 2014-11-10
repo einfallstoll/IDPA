@@ -158,13 +158,8 @@ $(function () {
     
     var paths = [];
     
-    var redraw = function() {
-        
-        paths.forEach(function(path) {
-            path.remove();
-        });
-        
-        var input = {
+    var readConfiguration = function() {
+        return {
             requestID: Math.random(),
             terrain: {
                 angle: parseFloat($('input[name=angle]').val()),
@@ -186,10 +181,18 @@ $(function () {
                 density: parseFloat($('input[name=density]').val()),
             },
             points: {
-                max: 100,
-                steps: 0.1,
+                max: 1000,
+                steps: 0.5,
             }
-        },
+        };
+    },
+        redraw = function() {
+        
+        paths.forEach(function(path) {
+            path.remove();
+        });
+        
+        var input = readConfiguration(),
             result = analyze(input);
         
         var properties = $('input[name=diagram]:checked').val().split('|'),
@@ -239,4 +242,104 @@ $(function () {
     
     $('input[name=graphs]').change(redraw);
     $('input[name=diagram]').change(redraw);
+    
+    var showConfigurations = function() {
+        var savedConfigurations = [];
+        try {
+            savedConfigurations = JSON.parse(localStorage.configurations);
+        }
+        catch(e) {
+            savedConfigurations = [{
+                name: 'Schlittschuhfahrer auf leichtem Gefälle',
+                config: {
+                    "terrain": {
+                        "angle": 10,
+                        "gravitation": 9.798,
+                        "length": 1000
+                    },
+                    "subject": {
+                        "weight": 80,
+                        "area": 0.66,
+                        "cw": 0.78,
+                        "init_velo": 0,
+                        "force": 0
+                    },
+                    "resistance": {
+                        "stationary": 0.027,
+                        "underway": 0
+                    },
+                    "fluid": {
+                        "density": 1.204
+                    }
+                }
+            }];
+            
+            localStorage.configurations = JSON.stringify(savedConfigurations);
+        }
+        
+        $('select[name=configuration]').empty();
+        
+        for (var i = 0; i < savedConfigurations.length; i++) {
+            var option = $('<option></option>');
+            option.val(i);
+            option.text(savedConfigurations[i].name);
+            option.appendTo($('select[name=configuration]'));
+        }
+    };
+    showConfigurations();
+    
+    $('#save').click(function(e) {
+        e.preventDefault();
+        
+        var savedConfigurations = [];
+        try {
+            savedConfigurations = JSON.parse(localStorage.configurations);
+        }
+        catch(e) {}
+        
+        savedConfigurations.push({
+            name: $('input[name=configuration]').val(),
+            config: readConfiguration()
+        });
+        
+        localStorage.configurations = JSON.stringify(savedConfigurations);
+        
+        showConfigurations();
+    });
+    
+    $('#load').click(function(e) {
+        e.preventDefault();
+        
+        var savedConfigurations = [];
+        try {
+            savedConfigurations = JSON.parse(localStorage.configurations);
+            
+            var loadedConfiguration = savedConfigurations[$('select[name=configuration]').val()].config;
+
+            for (var section in loadedConfiguration) {
+                if (typeof loadedConfiguration[section] === 'object') {
+                    for (var name in loadedConfiguration[section]) {
+                        $('input[name=' + name + ']').val(loadedConfiguration[section][name]);
+                    }
+                }
+            }
+        }
+        catch(e) {}
+    });
+    
+    $('#delete').click(function(e) {
+        e.preventDefault();
+        
+        var savedConfigurations = [];
+        try {
+            savedConfigurations = JSON.parse(localStorage.configurations);
+        }
+        catch(e) {}
+        
+        savedConfigurations.splice($('select[name=configuration]').val(), 1);
+        
+        localStorage.configurations = JSON.stringify(savedConfigurations);
+        
+        showConfigurations();
+    });
 });
