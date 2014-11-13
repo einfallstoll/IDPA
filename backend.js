@@ -1,3 +1,5 @@
+/*global cosh, tanh, toRadians*/
+
 function getSpeedWithoutAirResistance(f_Res, weight, init_velo, terrain_length, points_max) {
     "use strict";
     var i = 0,
@@ -63,43 +65,63 @@ function analyze(requestJSon) {
     var res = {
             forRequestID: requestJSon.requestID
         },
-        f_Gewicht = requestJSon.subject.weight * requestJSon.terrain.gravitation, //Gewichtskraft in Newton [N]
-        f_Hangab = f_Gewicht * Math.sin(toRadians(requestJSon.terrain.angle)), //Hangabtriebskraft in [N]
-        f_Normal = f_Gewicht * Math.cos(toRadians(requestJSon.terrain.angle)), //Normalkraft in [N]
+        f_Gewicht = 0,
+        f_Hangab = 0,
+        f_Normal = 0,
 
-        f_Haft = f_Normal * requestJSon.resistance.stationary, //Haftreibungskraft in [N]
-        f_Gleit = f_Normal * requestJSon.resistance.underway, //Gleitreibungskraft in [N]
+        f_Haft = 0,
+        f_Gleit = 0,
 
-        f_Air = requestJSon.subject.area * requestJSon.fluid.density * requestJSon.subject.cw * requestJSon.subject.init_velo * requestJSon.subject.init_velo / 2,
+        f_Air = 0,
+
+        f_Res = 0;
+
+    if (!isNaN(requestJSon.terrain.angle) && !isNaN(requestJSon.terrain.gravitation) && !isNaN(requestJSon.terrain.length) && !isNaN(requestJSon.subject.weight) && !isNaN(requestJSon.subject.area) && !isNaN(requestJSon.subject.cw) && !isNaN(requestJSon.subject.init_velo) && !isNaN(requestJSon.subject.force) && !isNaN(requestJSon.resistance.stationary) && !isNaN(requestJSon.resistance.underway) && !isNaN(requestJSon.fluid.density) && !isNaN(requestJSon.points.max) && !isNaN(requestJSon.points.steps)) {
+        f_Gewicht = requestJSon.subject.weight * requestJSon.terrain.gravitation; //Gewichtskraft in Newton [N]
+        f_Hangab = f_Gewicht * Math.sin(toRadians(requestJSon.terrain.angle)); //Hangabtriebskraft in [N]
+        f_Normal = f_Gewicht * Math.cos(toRadians(requestJSon.terrain.angle)); //Normalkraft in [N]
+
+        f_Haft = f_Normal * requestJSon.resistance.stationary; //Haftreibungskraft in [N]
+        f_Gleit = f_Normal * requestJSon.resistance.underway; //Gleitreibungskraft in [N]
+
+        f_Air = requestJSon.subject.area * requestJSon.fluid.density * requestJSon.subject.cw * requestJSon.subject.init_velo * requestJSon.subject.init_velo / 2;
 
         f_Res = f_Hangab - f_Haft;
 
-    if (requestJSon.subject.init_velo > 0 || f_Res > 0) {
-        f_Res = f_Hangab - f_Gleit + requestJSon.subject.force;
+        if (requestJSon.subject.init_velo > 0 || f_Res > 0) {
+            f_Res = f_Hangab - f_Gleit + requestJSon.subject.force;
 
-        res.withoutAirResistance = getSpeedWithoutAirResistance(f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.terrain.length, requestJSon.points.max);
+            res.withoutAirResistance = getSpeedWithoutAirResistance(f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.terrain.length, requestJSon.points.max);
 
-        f_Res = f_Hangab - f_Air - f_Haft;
-        if (f_Res > 0) {
-            f_Res = f_Hangab - f_Air - f_Gleit + requestJSon.subject.force;
+            f_Res = f_Hangab - f_Air - f_Haft;
+            if (f_Res > 0) {
+                f_Res = f_Hangab - f_Air - f_Gleit + requestJSon.subject.force;
 
-            res.approximateAirResistance = getSpeedApproximateAirResistance(requestJSon.points.steps, f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.terrain.length, requestJSon.subject.area, requestJSon.fluid.density, requestJSon.subject.cw, f_Gleit, f_Hangab);
+                res.approximateAirResistance = getSpeedApproximateAirResistance(requestJSon.points.steps, f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.terrain.length, requestJSon.subject.area, requestJSon.fluid.density, requestJSon.subject.cw, f_Gleit, f_Hangab);
 
-            f_Res = requestJSon.subject.force + f_Hangab - f_Gleit;
-            res.withAirResistance = getWithAirResistance(requestJSon.points.steps, f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.subject.area, requestJSon.fluid.density, requestJSon.subject.cw, requestJSon.terrain.length);
-        } else {
-            res.approximateAirResistance = [{
-                speed: 0,
-                path: 0,
-                time: 0
-            }];
-            res.withAirResistance = [{
-                speed: 0,
-                path: 0,
-                time: 0
-            }];
+                f_Res = requestJSon.subject.force + f_Hangab - f_Gleit;
+                res.withAirResistance = getWithAirResistance(requestJSon.points.steps, f_Res, requestJSon.subject.weight, requestJSon.subject.init_velo, requestJSon.subject.area, requestJSon.fluid.density, requestJSon.subject.cw, requestJSon.terrain.length);
+            }
         }
-    } else {
+    }
+    if (res.approximateAirResistance === null) {
+        res.approximateAirResistance = [];
+        res.approximateAirResistance = [{
+            speed: 0,
+            path: 0,
+            time: 0
+        }];
+    }
+
+    if (res.withAirResistance === null) {
+        res.withAirResistance = [{
+            speed: 0,
+            path: 0,
+            time: 0
+        }];
+    }
+
+    if (res.withoutAirResistance === null) {
         res.withoutAirResistance = [{
             speed: 0,
             path: 0,
