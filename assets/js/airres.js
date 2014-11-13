@@ -11,6 +11,7 @@ function AirResContext(canvas, dom) {
         grid: {
             margin: 60,
             stroke: '#EEE',
+            darkStroke: '#000',
             strokeWidth: 2
         },
         path: {
@@ -81,6 +82,12 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
         
         var horizontalLine = this.context.line(x1, y1, x2, y2);
         
+        if (i === vSegments) {
+            horizontalLine.attr({
+                stroke: this.config.grid.darkStroke
+            });
+        }
+        
         this.grid.add(horizontalLine);
         
     }
@@ -94,6 +101,12 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
             y2 = this.config.grid.margin + height + this.config.grid.strokeWidth / 2;
         
         var verticalLine = this.context.line(x1, y1, x2, y2);
+        
+        if (i === 0) {
+            verticalLine.attr({
+                stroke: this.config.grid.darkStroke
+            });
+        }
         
         this.grid.add(verticalLine);
     }
