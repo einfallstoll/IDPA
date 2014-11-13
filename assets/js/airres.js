@@ -51,6 +51,70 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
             max: yMax
         }
     };
+    
+    // If the axis are already drawn, remove them
+    if (this.axis) {
+        this.axis.remove();
+    }
+    
+    // Create a group for both axis
+    this.axis = this.context.g();
+    
+    // Create a group for both the x- and the y-axis
+    var xAxis = this.context.g(),
+        yAxis = this.context.g();
+    
+    // Calculate the range for the axis
+    var xRange = xMax - xMin,
+        yRange = yMax - yMin;
+    
+    // Save the height and width of the DOM object of the canvas
+    var height = this.domContext.height() - 2 * this.config.grid.margin,
+        width = this.domContext.width() - 2 * this.config.grid.margin,
+        gridHeight = height / this.verticalSegments,
+        gridWidth = width / this.horizontalSegments;
+    
+    for (var i = 0; i < this.verticalSegments; i++) {
+        // Calculate the value for the next axis step
+        var value = ((xRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
+        
+        // Calculate the points for vertical grid
+        var x = this.config.grid.margin - this.config.grid.strokeWidth / 2,
+            y = this.config.grid.margin + i * gridHeight;
+        
+        // Draw the value text
+        var valueText = this.context.text(x, y, value),
+            valueTextBox = valueText.getBBox();
+        
+        // Transform value text to be left from the axis
+        valueText.transform('T' + -valueTextBox.width + ',' + (valueTextBox.height / 2));
+        
+        // Add the value text to the x-axis group
+        xAxis.add(valueText);
+    }
+    
+    for (var i = 0; i <= this.horizontalSegments; i++) {
+        // Calculate the value for the next axis step
+        var value = ((yRange / this.horizontalSegments) * i).toFixed(1);
+        
+        // Calculate the points for vertical grid
+        var x = this.config.grid.margin + i * gridWidth,
+            y = this.config.grid.margin + height + this.config.grid.strokeWidth / 2;
+        
+        // Draw the value text
+        var valueText = this.context.text(x, y, value),
+            valueTextBox = valueText.getBBox();
+        
+        // Transform value text to be left from the axis
+        valueText.transform('T' + -(valueTextBox.width / 2) + ',' + valueTextBox.height);
+        
+        // Add the value text to the x-axis group
+        yAxis.add(valueText);
+    }
+    
+    // Add the x- and the y-axis to the axis-group
+    this.axis.add(xAxis);
+    this.axis.add(yAxis);
 };
 
 AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
