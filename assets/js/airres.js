@@ -400,6 +400,29 @@ $(function () {
                         "density": 1.204
                     }
                 }
+            }, {
+                name: 'Mensch fällt von einem hohen Gebäude',
+                config: {
+                    "terrain": {
+                        "angle": 90,
+                        "gravitation": 9.798,
+                        "length": 750
+                    },
+                    "subject": {
+                        "weight": 80,
+                        "area": 0.66,
+                        "cw": 0.78,
+                        "init_velo": 0,
+                        "force": 0
+                    },
+                    "resistance": {
+                        "stationary": 0,
+                        "underway": 0
+                    },
+                    "fluid":{
+                        "density": 1.204
+                    }
+                }
             }];
             
             // Save the example configurations to the localStorage
