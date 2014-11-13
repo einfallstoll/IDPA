@@ -296,6 +296,10 @@ $(function () {
     $('input[name=graphs]').change(redraw);
     $('input[name=diagram]').change(redraw);
     
+    // If the values change, redraw, too
+    $('.form-group input').keyup(redraw);
+    $('.pre-defined').change(redraw);
+    
     // Redraw the saved configurations
     var showConfigurations = function() {
         
