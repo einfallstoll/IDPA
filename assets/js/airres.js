@@ -187,7 +187,7 @@ $(function () {
                 force: parseFloat($('input[name=force]').val()),
             },
             resistance: {
-                stationary: parseFloat($('input[name=resistance]').val()),
+                stationary: parseFloat($('input[name=stationary]').val()),
                 underway: 0,
             },
             fluid: {
