@@ -9,7 +9,7 @@ function AirResContext(canvas, dom) {
     
     this.config = {
         grid: {
-            margin: 30,
+            margin: 60,
             stroke: '#EEE',
             strokeWidth: 2
         },
