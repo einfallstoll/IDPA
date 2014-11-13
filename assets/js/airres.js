@@ -403,7 +403,7 @@ $(function () {
             for (var section in loadedConfiguration) {
                 if (typeof loadedConfiguration[section] === 'object') {
                     for (var name in loadedConfiguration[section]) {
-                        $('input[name=' + name + ']').val(loadedConfiguration[section][name]);
+                        $('input[name=' + name + ']').val(loadedConfiguration[section][name]).keyup();
                     }
                 }
             }
