@@ -437,7 +437,8 @@ $(function () {
     context.drawAxisLabels(labels[xProperty], labels[yProperty]);
     
     // Initialize a place to store all the paths
-    var paths = [];
+    var paths = [],
+        configurationIsLoading = false;
     
     // Read configuration from the <form>'s
     var readConfiguration = function() {
@@ -539,6 +540,14 @@ $(function () {
                     paths.push(context.drawData(xData, yData, graphColors[graphType]));
                 });
             }
+        },
+        redrawAndResetConfiguration = function() {
+            redraw();
+            
+            // Select 0 if redraw happens and no configuration is loading
+            if (!configurationIsLoading) {
+                $('select[name=configuration]').val(0);
+            }
         };
     
     // If different graphs are required or the diagram type changes, redraw it
@@ -546,8 +555,8 @@ $(function () {
     $('input[name=diagram]').change(redraw);
     
     // If the values change, redraw, too
-    $('.form-group input').keyup(redraw);
-    $('.pre-defined').change(redraw);
+    $('.configuration-form .form-group input').keyup(redrawAndResetConfiguration);
+    $('.configuration-form .pre-defined').change(redrawAndResetConfiguration);
     
     // Redraw the saved configurations
     var showConfigurations = function() {
@@ -614,15 +623,22 @@ $(function () {
             localStorage.configurations = JSON.stringify(savedConfigurations);
         }
         
+        var createOption = function(text, value) {
+            var option = $('<option></option>');
+            option.val(value);
+            option.text(text);
+            option.appendTo($('select[name=configuration]'));
+        };
+        
         // Remove all options from the configuration-select
         $('select[name=configuration]').empty();
         
+        // Create empty option
+        createOption('Konfiguration zum Laden auswählen...', 0);
+        
         // For all found configurations create an option
         for (var i = 0; i < savedConfigurations.length; i++) {
-            var option = $('<option></option>');
-            option.val(i);
-            option.text(savedConfigurations[i].name);
-            option.appendTo($('select[name=configuration]'));
+            createOption(savedConfigurations[i].name, i);
         }
     };
     
@@ -659,8 +675,8 @@ $(function () {
         showConfigurations();
     });
     
-    // Load configuration clicked
-    $('#load').click(function(e) {
+    // Load configuration changed
+    $('select[name=configuration]').change(function(e) {
         
         // Prevent the form from reloading the page
         e.preventDefault();
@@ -671,6 +687,9 @@ $(function () {
         // Try to parse the saved configurations
         try {
             savedConfigurations = JSON.parse(localStorage.configurations);
+            
+            // Configuration is now loading
+            configurationIsLoading = true;
             
             // Read the selected configuration
             var loadedConfiguration = savedConfigurations[$('select[name=configuration]').val()].config;
@@ -683,6 +702,9 @@ $(function () {
                     }
                 }
             }
+            
+            // Configuration finished loading
+            configurationIsLoading = false;
         }
         
         // If the saved configurations couldn't be read... uhm... we'll ignore it
