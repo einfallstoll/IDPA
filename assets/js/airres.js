@@ -57,6 +57,11 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         this.axis.remove();
     }
     
+    // Don't draw axis if no data is shown
+    if (xMax === 0 || yMax === 0) {
+        return;   
+    }
+    
     // Create a group for both axis
     this.axis = this.context.g();
     
