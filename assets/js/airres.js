@@ -191,7 +191,7 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
     return this.grid;
 };
 
-AirResContext.prototype.drawData = function (xData, yData) {
+AirResContext.prototype.drawData = function (xData, yData, color) {
     
     // If the datapoints for x and y does not match, throw an error
     if (xData.length != yData.length) {
@@ -227,7 +227,7 @@ AirResContext.prototype.drawData = function (xData, yData) {
     
     // Set attributes for the drawn path
     graph.attr({
-        stroke: this.config.path.stroke,
+        stroke: color,
         strokeWidth: this.config.path.strokeWidth,
         'fill-opacity': 0
     });
@@ -351,7 +351,7 @@ $(function () {
                     });
 
                     // Draw the path and push it to the paths-array, so we can remove it on redraw
-                    paths.push(context.drawData(xData, yData));
+                    paths.push(context.drawData(xData, yData, graphColors[graphType]));
                 });
             }
         };
