@@ -17,6 +17,18 @@ function AirResContext(canvas, dom) {
         path: {
             stroke: '#444',
             strokeWidth: 2
+        },
+        axis: {
+            xAxis: 'X',
+            yAxis: 'Y',
+            size: 10
+        },
+        cross: {
+            stroke: '#000'
+        },
+        locationLabel: {
+            size: 10,
+            margin: 3
         }
     };
     
@@ -34,8 +46,58 @@ function AirResContext(canvas, dom) {
         }
     };
     
+    this.axisUnits = {
+        x: 'X',
+        y: 'Y'
+    };
+    
     return this;
 }
+
+AirResContext.prototype.drawAxisLabels = function(xLabel, yLabel) {
+    // If the axis are already drawn, remove them
+    if (this.axisLabels) {
+        this.axisLabels.remove();
+    }
+    
+    // Create a group for both axis
+    this.axisLabels = this.context.g();
+    
+    // Save the unit of the axis
+    var unitRegex = /.+\[(.+)\]/
+    
+    if (unitRegex.test(xLabel)) {
+        this.axisUnits.x = RegExp.$1;
+    }
+    
+    if (unitRegex.test(yLabel)) {
+        this.axisUnits.y = RegExp.$1;
+    }
+    
+    // Save the height and width of the DOM object of the canvas
+    var height = this.domContext.height() - 2 * this.config.grid.margin,
+        width = this.domContext.width() - 2 * this.config.grid.margin;
+    
+    // Draw the label for the y-axis
+    var yAxisLabel = this.context.text(0, 0, yLabel),
+        yAxisLabelBox = yAxisLabel.getBBox();
+    
+    // Rotate and transform the label for the y-axis
+    yAxisLabel.transform('R270,T' + -(yAxisLabelBox.width / 2 - yAxisLabelBox.height / 2) + ',' + (height / 2 + this.config.grid.margin));
+    
+    // Add the label to the axis-label group
+    this.axisLabels.add(yAxisLabel);
+    
+    // Draw the label for the y-axis
+    var xAxisLabel = this.context.text(0, 0, xLabel),
+        xAxisLabelBox = xAxisLabel.getBBox();
+    
+    // Rotate and transform the label for the y-axis
+    xAxisLabel.transform('T' + (this.config.grid.margin + width / 2 - xAxisLabelBox.width / 2) + ',' + (this.domContext.height() - xAxisLabelBox.height));
+    
+    // Add the label to the axis-label group
+    this.axisLabels.add(xAxisLabel);
+};
 
 AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
     'use strict';
@@ -57,6 +119,11 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         this.axis.remove();
     }
     
+    // Don't draw axis if no data is shown
+    if (xMax === 0 || yMax === 0) {
+        return;   
+    }
+    
     // Create a group for both axis
     this.axis = this.context.g();
     
@@ -74,42 +141,56 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         gridHeight = height / this.verticalSegments,
         gridWidth = width / this.horizontalSegments;
     
-    for (var i = 0; i < this.verticalSegments; i++) {
+    for (var i = 0; i <= this.verticalSegments; i++) {
         // Calculate the value for the next axis step
-        var value = ((xRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
+        var value = ((yRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
         
         // Calculate the points for vertical grid
-        var x = this.config.grid.margin - this.config.grid.strokeWidth / 2,
-            y = this.config.grid.margin + i * gridHeight;
+        var x = this.config.grid.margin - this.config.grid.strokeWidth / 2 - 5,
+            y = this.config.grid.margin + i * gridHeight - 5;
         
         // Draw the value text
-        var valueText = this.context.text(x, y, value),
-            valueTextBox = valueText.getBBox();
+        var valueText = this.context.text(x, y, value);
+        
+        // Resize the font
+        valueText.attr({
+            'font-size': this.config.axis.size
+        });
+        
+        // Get the bounding box
+        var valueTextBox = valueText.getBBox();
         
         // Transform value text to be left from the axis
         valueText.transform('T' + -valueTextBox.width + ',' + (valueTextBox.height / 2));
         
         // Add the value text to the x-axis group
-        xAxis.add(valueText);
+        yAxis.add(valueText);
     }
     
     for (var i = 0; i <= this.horizontalSegments; i++) {
         // Calculate the value for the next axis step
-        var value = ((yRange / this.horizontalSegments) * i).toFixed(1);
+        var value = ((xRange / this.horizontalSegments) * i).toFixed(1);
         
         // Calculate the points for vertical grid
         var x = this.config.grid.margin + i * gridWidth,
             y = this.config.grid.margin + height + this.config.grid.strokeWidth / 2;
         
         // Draw the value text
-        var valueText = this.context.text(x, y, value),
-            valueTextBox = valueText.getBBox();
+        var valueText = this.context.text(x, y, value);
+        
+        // Resize the font
+        valueText.attr({
+            'font-size': this.config.axis.size
+        });
+        
+        // Get the bounding box
+        var valueTextBox = valueText.getBBox();
         
         // Transform value text to be left from the axis
         valueText.transform('T' + -(valueTextBox.width / 2) + ',' + valueTextBox.height);
         
         // Add the value text to the x-axis group
-        yAxis.add(valueText);
+        xAxis.add(valueText);
     }
     
     // Add the x- and the y-axis to the axis-group
@@ -188,10 +269,93 @@ AirResContext.prototype.drawGrid = function (hSegments, vSegments) {
         strokeWidth: this.config.grid.strokeWidth
     });
     
+    // Save the context for closure
+    var _this = this;
+    
+    // Display location box
+    this.context.mousemove(function(event) {
+        // Scope the function to call it in a new this-context
+        (function() {
+            // Normalize the x- and y-coordinates
+            var x = event.offsetX - this.config.grid.margin,
+                y = event.offsetY - this.config.grid.margin
+            
+            // Draw cross and location if within the grid, otherwise remove them
+            if (
+                x >= 0 &&
+                x <= width &&
+                y >= 0 &&
+                y <= height
+            ) {
+                
+                // If no location saved yet, create a new object for it
+                if (!this.location) {
+                    this.location = {};
+                }
+                
+                // Save the coordinates
+                this.location.x = x;
+                this.location.y = y;
+                
+                // If the cross was already drawn, remove it
+                if (this.location.cross) {
+                    this.location.cross.remove();
+                }
+                
+                // Create a new group for the cross
+                this.location.cross = this.context.g();
+                
+                // Draw both, the horizontal and the vertical line
+                this.location.cross.add(this.context.line(this.config.grid.margin + x, this.config.grid.margin, this.config.grid.margin + x, this.config.grid.margin + height));
+                this.location.cross.add(this.context.line(this.config.grid.margin, this.config.grid.margin + y, this.config.grid.margin + width, this.config.grid.margin + y));
+            
+                // Apply some attributes to it
+                this.location.cross.attr({
+                    stroke: this.config.cross.stroke,
+                    strokeWidth: 1
+                });
+                
+                // If the location labels are already drawn, remove them
+                if (this.location.label) {
+                    this.location.label.remove();
+                }
+                
+                // Create a new group for the location labels
+                this.location.label = this.context.g();
+                
+                // Calculate the range of the x- and y-axis
+                var xRange = this.boundings.x.max - this.boundings.x.min,
+                    yRange = this.boundings.y.max - this.boundings.y.min;
+                
+                // Create both location labels
+                var xLabel = this.context.text(this.config.grid.margin + x, this.config.grid.margin + y, (xRange / width * x).toFixed(1) + ' ' + this.axisUnits.x),
+                    yLabel = this.context.text(this.config.grid.margin + x, this.config.grid.margin + y, (yRange / height * (height - y)).toFixed(1) + ' ' + this.axisUnits.y);
+                
+                // Add the location labels to the previously created group
+                this.location.label.add(xLabel);
+                this.location.label.add(yLabel);
+            
+                // Move the labels around, according to their own size
+                xLabel.transform('T' + -(xLabel.getBBox().width + this.config.locationLabel.margin) + ',' + -this.config.locationLabel.margin);
+                yLabel.transform('T' + -(yLabel.getBBox().width + this.config.locationLabel.margin) + ',' + -(xLabel.getBBox().height + this.config.locationLabel.margin));
+            } else {
+                // Remove the cross only, if it's already drawn
+                if (this.location.cross) {
+                    this.location.cross.remove();
+                }
+                
+                // Remove the location labels only, if they're already drawn
+                if (this.location.label) {
+                    this.location.label.remove();
+                }
+            }
+        }).call(_this)
+    });
+    
     return this.grid;
 };
 
-AirResContext.prototype.drawData = function (xData, yData) {
+AirResContext.prototype.drawData = function (xData, yData, color) {
     
     // If the datapoints for x and y does not match, throw an error
     if (xData.length != yData.length) {
@@ -227,7 +391,7 @@ AirResContext.prototype.drawData = function (xData, yData) {
     
     // Set attributes for the drawn path
     graph.attr({
-        stroke: this.config.path.stroke,
+        stroke: color,
         strokeWidth: this.config.path.strokeWidth,
         'fill-opacity': 0
     });
@@ -241,7 +405,17 @@ $(function () {
     // Get the DOM-Object for the diagram, read the width of the parent and calculate the height
     var domContext = $('#diagram'),
         totalWidth = domContext.closest('div').width(),
-        totalHeight = (totalWidth / 16) * 9;
+        totalHeight = (totalWidth / 16) * 9,
+        labels = {
+            speed: 'Geschwindigkeit [m/s]',
+            path: 'Weg [m]',
+            time: 'Zeit [s]'
+        },
+        graphColors = {
+            withoutAirResistance: 'blue',
+            approximateAirResistance: 'green',
+            withAirResistance: 'red'
+        };
     
     // Add the width and height to the diagram
     domContext.attr('width', totalWidth);
@@ -253,6 +427,14 @@ $(function () {
     
     // Draw the grid
     context.drawGrid(15, 10);
+    
+    // Read which properties should be shown
+    var properties = $('input[name=diagram]:checked').val().split('|'),
+        xProperty = properties[1],
+        yProperty = properties[0];
+    
+    // Draw the labels for the axis
+    context.drawAxisLabels(labels[xProperty], labels[yProperty]);
     
     // Initialize a place to store all the paths
     var paths = [];
@@ -302,6 +484,9 @@ $(function () {
                 xProperty = properties[1],
                 yProperty = properties[0];
 
+            // Draw the labels for the axis
+            context.drawAxisLabels(labels[xProperty], labels[yProperty]);
+            
             // Initialize min- and max-values
             var xMin = 0,
                 xMax = 0,
@@ -351,7 +536,7 @@ $(function () {
                     });
 
                     // Draw the path and push it to the paths-array, so we can remove it on redraw
-                    paths.push(context.drawData(xData, yData));
+                    paths.push(context.drawData(xData, yData, graphColors[graphType]));
                 });
             }
         };
