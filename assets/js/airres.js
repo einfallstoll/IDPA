@@ -241,7 +241,12 @@ $(function () {
     // Get the DOM-Object for the diagram, read the width of the parent and calculate the height
     var domContext = $('#diagram'),
         totalWidth = domContext.closest('div').width(),
-        totalHeight = (totalWidth / 16) * 9;
+        totalHeight = (totalWidth / 16) * 9,
+        graphColors = {
+            withoutAirResistance: 'blue',
+            approximateAirResistance: 'green',
+            withAirResistance: 'red'
+        };
     
     // Add the width and height to the diagram
     domContext.attr('width', totalWidth);
