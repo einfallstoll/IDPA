@@ -17,6 +17,11 @@ function AirResContext(canvas, dom) {
         path: {
             stroke: '#444',
             strokeWidth: 2
+        },
+        axis: {
+            xAxis: 'X',
+            yAxis: 'Y',
+            size: 10
         }
     };
     
@@ -36,6 +41,51 @@ function AirResContext(canvas, dom) {
     
     return this;
 }
+
+AirResContext.prototype.drawAxisLabels = function(xLabel, yLabel) {
+    // If the axis are already drawn, remove them
+    if (this.axisLabels) {
+        this.axisLabels.remove();
+    }
+    
+    // Create a group for both axis
+    this.axisLabels = this.context.g();
+    
+    // Save the unit of the axis
+    var unitRegex = /.+\[(.+)\]/
+    
+    if (unitRegex.test(xLabel)) {
+        this.axisUnits.x = RegExp.$1;
+    }
+    
+    if (unitRegex.test(yLabel)) {
+        this.axisUnits.y = RegExp.$1;
+    }
+    
+    // Save the height and width of the DOM object of the canvas
+    var height = this.domContext.height() - 2 * this.config.grid.margin,
+        width = this.domContext.width() - 2 * this.config.grid.margin;
+    
+    // Draw the label for the y-axis
+    var yAxisLabel = this.context.text(0, 0, yLabel),
+        yAxisLabelBox = yAxisLabel.getBBox();
+    
+    // Rotate and transform the label for the y-axis
+    yAxisLabel.transform('R270,T' + -(yAxisLabelBox.width / 2 - yAxisLabelBox.height / 2) + ',' + (height / 2 + this.config.grid.margin));
+    
+    // Add the label to the axis-label group
+    this.axisLabels.add(yAxisLabel);
+    
+    // Draw the label for the y-axis
+    var xAxisLabel = this.context.text(0, 0, xLabel),
+        xAxisLabelBox = xAxisLabel.getBBox();
+    
+    // Rotate and transform the label for the y-axis
+    xAxisLabel.transform('T' + (this.config.grid.margin + width / 2 - xAxisLabelBox.width / 2) + ',' + (this.domContext.height() - xAxisLabelBox.height));
+    
+    // Add the label to the axis-label group
+    this.axisLabels.add(xAxisLabel);
+};
 
 AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
     'use strict';
@@ -247,6 +297,11 @@ $(function () {
     var domContext = $('#diagram'),
         totalWidth = domContext.closest('div').width(),
         totalHeight = (totalWidth / 16) * 9,
+        labels = {
+            speed: 'Geschwindigkeit [m/s]',
+            path: 'Weg [m]',
+            time: 'Zeit [s]'
+        },
         graphColors = {
             withoutAirResistance: 'blue',
             approximateAirResistance: 'green',
@@ -263,6 +318,14 @@ $(function () {
     
     // Draw the grid
     context.drawGrid(15, 10);
+    
+    // Read which properties should be shown
+    var properties = $('input[name=diagram]:checked').val().split('|'),
+        xProperty = properties[1],
+        yProperty = properties[0];
+    
+    // Draw the labels for the axis
+    context.drawAxisLabels(labels[xProperty], labels[yProperty]);
     
     // Initialize a place to store all the paths
     var paths = [];
@@ -312,6 +375,9 @@ $(function () {
                 xProperty = properties[1],
                 yProperty = properties[0];
 
+            // Draw the labels for the axis
+            context.drawAxisLabels(labels[xProperty], labels[yProperty]);
+            
             // Initialize min- and max-values
             var xMin = 0,
                 xMax = 0,
