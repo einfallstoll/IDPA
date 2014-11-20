@@ -76,7 +76,7 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
     
     for (var i = 0; i < this.verticalSegments; i++) {
         // Calculate the value for the next axis step
-        var value = ((xRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
+        var value = ((yRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
         
         // Calculate the points for vertical grid
         var x = this.config.grid.margin - this.config.grid.strokeWidth / 2,
@@ -90,12 +90,12 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         valueText.transform('T' + -valueTextBox.width + ',' + (valueTextBox.height / 2));
         
         // Add the value text to the x-axis group
-        xAxis.add(valueText);
+        yAxis.add(valueText);
     }
     
     for (var i = 0; i <= this.horizontalSegments; i++) {
         // Calculate the value for the next axis step
-        var value = ((yRange / this.horizontalSegments) * i).toFixed(1);
+        var value = ((xRange / this.horizontalSegments) * i).toFixed(1);
         
         // Calculate the points for vertical grid
         var x = this.config.grid.margin + i * gridWidth,
@@ -109,7 +109,7 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         valueText.transform('T' + -(valueTextBox.width / 2) + ',' + valueTextBox.height);
         
         // Add the value text to the x-axis group
-        yAxis.add(valueText);
+        xAxis.add(valueText);
     }
     
     // Add the x- and the y-axis to the axis-group
