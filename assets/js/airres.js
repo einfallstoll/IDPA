@@ -79,7 +79,7 @@ AirResContext.prototype.setBoundings = function (xMin, xMax, yMin, yMax) {
         gridHeight = height / this.verticalSegments,
         gridWidth = width / this.horizontalSegments;
     
-    for (var i = 0; i < this.verticalSegments; i++) {
+    for (var i = 0; i <= this.verticalSegments; i++) {
         // Calculate the value for the next axis step
         var value = ((yRange / this.verticalSegments) * (this.verticalSegments - i)).toFixed(1);
         
