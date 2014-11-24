@@ -465,7 +465,7 @@ $(function () {
             },
             points: {
                 max: 1000,
-                steps: 0.5,
+                steps: parseFloat($('input[name=steps]').val()),
             }
         };
     },
