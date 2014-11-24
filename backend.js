@@ -76,7 +76,7 @@ function analyze(requestJSon) {
 
         f_Res = 0;
 
-    if (!isNaN(requestJSon.terrain.angle) && !isNaN(requestJSon.terrain.gravitation) && !isNaN(requestJSon.terrain.length) && !isNaN(requestJSon.subject.weight) && !isNaN(requestJSon.subject.area) && !isNaN(requestJSon.subject.cw) && !isNaN(requestJSon.subject.init_velo) && !isNaN(requestJSon.subject.force) && !isNaN(requestJSon.resistance.stationary) && !isNaN(requestJSon.resistance.underway) && !isNaN(requestJSon.fluid.density) && !isNaN(requestJSon.points.max) && !isNaN(requestJSon.points.steps)) {
+    if (!isNaN(requestJSon.terrain.angle) && !isNaN(requestJSon.terrain.gravitation) && !isNaN(requestJSon.terrain.length) && !isNaN(requestJSon.subject.weight) && !isNaN(requestJSon.subject.area) && !isNaN(requestJSon.subject.cw) && !isNaN(requestJSon.subject.init_velo) && !isNaN(requestJSon.subject.force) && !isNaN(requestJSon.resistance.stationary) && !isNaN(requestJSon.resistance.underway) && !isNaN(requestJSon.fluid.density) && !isNaN(requestJSon.points.max) && !isNaN(requestJSon.points.steps) && (requestJSon.points.steps > 0)) {
         f_Gewicht = requestJSon.subject.weight * requestJSon.terrain.gravitation; //Gewichtskraft in Newton [N]
         f_Hangab = f_Gewicht * Math.sin(toRadians(requestJSon.terrain.angle)); //Hangabtriebskraft in [N]
         f_Normal = f_Gewicht * Math.cos(toRadians(requestJSon.terrain.angle)); //Normalkraft in [N]
