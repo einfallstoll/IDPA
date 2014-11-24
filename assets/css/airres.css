@@ -23,3 +23,8 @@
     height: 10px;
     border-radius: 5px;
 }
+
+.footer {
+    opacity: 0.5;
+    font-size: 8pt;
+}
