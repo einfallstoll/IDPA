@@ -377,10 +377,9 @@ AirResContext.prototype.drawData = function (xData, yData, color) {
         
         // If it's the first datapoint, move the path to it using 'M'
         if (i === 0) {
-            path += 'M';
-        } else {
-            path += 'L';
+            path += 'M' + (this.config.grid.margin) + ',' + (height + this.config.grid.margin);
         }
+        path += 'L';
         
         // Append the datapoint to the path
         path += xCoordinate + ',' + yCoordinate;
