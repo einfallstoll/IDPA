@@ -1,8 +1,8 @@
 function tanh(x) {
     "use strict";
-    if (x === Infinity) {
+    if (x === Infinity || Infinity === Math.exp(x)) {
         return 1;
-    } else if (x === -Infinity) {
+    } else if (x === -Infinity || -Infinity === Math.exp(-x)) {
         return -1;
     } else {
         return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));
