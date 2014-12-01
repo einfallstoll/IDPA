@@ -509,8 +509,8 @@ $(function () {
                 });
 
                 // Calculate the max-values for the data of the current graph
-                var xTempMax = Math.max.apply(null, xData),
-                    yTempMax = Math.max.apply(null, yData);
+                var xTempMax = xData[xData.length - 1],
+                    yTempMax = yData[yData.length - 1];
 
                 // If the calculated max-values are bigger than the ones before, save them
                 if (xTempMax > xMax) xMax = xTempMax;
