@@ -470,6 +470,8 @@ $(function () {
     },
         redraw = function() {
         
+            $('.diagram-container .loading').show();
+            
             // Remove all paths on redraw
             paths.forEach(function(path) {
                 path.remove();
@@ -539,6 +541,8 @@ $(function () {
                     paths.push(context.drawData(xData, yData, graphColors[graphType]));
                 });
             }
+            
+            $('.diagram-container .loading').hide();
         },
         redrawAndResetConfiguration = function() {
             redraw();
