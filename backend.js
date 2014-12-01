@@ -4,7 +4,8 @@ function getSpeedWithoutAirResistance(f_Res, weight, init_velo, terrain_length, 
     "use strict";
     var i = 1,
         acceleration = f_Res / weight,
-        max_time = (-init_velo / acceleration) + Math.sqrt(init_velo * init_velo + 2 * acceleration * terrain_length / (acceleration * acceleration)),
+        max_time = (-init_velo + Math.sqrt(init_velo * init_velo + 2 * acceleration * terrain_length)) / acceleration,
+        //max_time = (-init_velo / acceleration) + Math.sqrt(init_velo * init_velo + 2 * acceleration * terrain_length / (acceleration * acceleration)),
 
         res = [];
     res[0] = {};
