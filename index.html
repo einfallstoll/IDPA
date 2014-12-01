@@ -26,7 +26,7 @@ body {
 <script>
 $(function() {
     $('.pre-defined').change(function() {
-        $(this).closest('.form-group').find('input').val($(this).val());
+        $(this).closest('.form-group').find('input').val($(this).val()).trigger('keyup');
     });
     
     $('.form-group input').keyup(function() {
