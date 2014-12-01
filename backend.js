@@ -2,11 +2,15 @@
 
 function getSpeedWithoutAirResistance(f_Res, weight, init_velo, terrain_length, points_max) {
     "use strict";
-    var i = 0,
+    var i = 1,
         acceleration = f_Res / weight,
         max_time = (-init_velo / acceleration) + Math.sqrt(init_velo * init_velo + 2 * acceleration * terrain_length / (acceleration * acceleration)),
 
         res = [];
+    res[0] = {};
+    res[0].time = 0;
+    res[0].speed = init_velo;
+    res[0].path = 0;
     for (i; i <= points_max - 1; i = i + 1) {
         res[i] = {};
         res[i].time = max_time / (points_max) * (i + 1);
@@ -19,13 +23,17 @@ function getSpeedWithoutAirResistance(f_Res, weight, init_velo, terrain_length, 
 
 function getSpeedApproximateAirResistance(steps, f_Res, wheight, init_velo, terrain_length, area, density, cw, f_Gleit, f_Hangab) {
     "use strict";
-    var i = 0,
+    var i = 1,
         acceleration = f_Res / wheight,
         last_velo = init_velo,
         pastPath = 0,
         pastSpeed = 0,
         f_Air = 0,
         res = [];
+    res[0] = {};
+    res[0].time = 0;
+    res[0].speed = init_velo;
+    res[0].path = 0;
     do {
         res[i] = {};
         res[i].time = (i + 1) * steps;
@@ -45,9 +53,13 @@ function getSpeedApproximateAirResistance(steps, f_Res, wheight, init_velo, terr
 
 function getWithAirResistance(steps, f_Res, weight, init_velo, area, density, cw, terrain_length) {
     "use strict";
-    var i = 0,
+    var i = 1,
 
         res = [];
+    res[0] = {};
+    res[0].time = 0;
+    res[0].speed = init_velo;
+    res[0].path = 0;
     do {
         res[i] = {};
         res[i].time = (i + 1) * steps;
