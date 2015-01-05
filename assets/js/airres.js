@@ -452,8 +452,8 @@ $(function () {
                 weight: parseFloat($('input[name=weight]').val()),
                 area: parseFloat($('input[name=area]').val()),
                 cw: parseFloat($('input[name=cw]').val()),
-                init_velo: parseFloat($('input[name=init_velo]').val()),
-                force: parseFloat($('input[name=force]').val()),
+                init_velo: 0,
+                force: 0,
             },
             resistance: {
                 stationary: parseFloat($('input[name=stationary]').val()),
